@@ -14,16 +14,16 @@ with open(os.getenv('inosatiot_cfg')) as f:
 
 
 def report_test():
-    NAME_FOR_USER = "Отчет о потреблении ЭЭ по группам нагрузок"
-    TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    name_for_user = "Отчет о потреблении ЭЭ по группам нагрузок"
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     # region setup
-    output_full_path = cfg['report']['output_path'] + "/" + NAME_FOR_USER + "/" + TIMESTAMP
-    output_file_name = output_full_path + "/ " + NAME_FOR_USER + "_" + TIMESTAMP
+    output_full_path = cfg['report']['output_path'] + "/" + name_for_user + "/" + timestamp
+    output_file_name = output_full_path + "/ " + name_for_user + "_" + timestamp
     name_internal = inspect.currentframe().f_code.co_name
 
     pathlib.Path(output_full_path).mkdir(parents=True, exist_ok=True)
-    #distutils.dir_util.copy_tree("templates/_base", output_full_path + "/tmp")
+    # distutils.dir_util.copy_tree("templates/_base", output_full_path + "/tmp")
     # distutils.file_util.copy_file("templates/" + name_internal + ".html",
     #                               output_full_path + "/tmp")
     # endregion
@@ -40,7 +40,9 @@ def report_test():
     from(bucket: "energy")
       |> range(start: -10d)
       |> filter(fn: (r) => r["_measurement"] == "energy_consumption")
-      |> filter(fn: (r) => r["_field"] == "total" or r["_field"] == "2250-M1" or r["_field"] == "2070-M1" or r["_field"] == "2040-M1" or r["_field"] == "1120-M1" or r["_field"] == "107-M1" or r["_field"] == "103-M1" or r["_field"] == "1020-M1")
+      |> filter(fn: (r) => r["_field"] == "total" or r["_field"] == "2250-M1" or r["_field"] == "2070-M1" 
+      or r["_field"] == "2040-M1" or r["_field"] == "1120-M1" or r["_field"] == "107-M1" 
+      or r["_field"] == "103-M1" or r["_field"] == "1020-M1")
       |> increase()
       |> last()
       |> yield()
@@ -51,7 +53,6 @@ def report_test():
 
     df = df.drop(columns=['result', 'table', '_measurement', 'host', ])
     df['_value'] = pd.to_numeric(df['_value'])
-
 
     # Excel
     df_excel = df
@@ -74,10 +75,10 @@ def report_test():
                       index=False,
                       startrow=4)
 
-    workbook = writer.book
+    # workbook = writer.book
     worksheet = writer.sheets['Sheet1']
 
-    worksheet.write(0, 0, NAME_FOR_USER)
+    worksheet.write(0, 0, name_for_user)
     worksheet.write(1, 0, 'от')
     worksheet.write(1, 1, f"{df_excel.iloc[0, df_excel.columns.get_loc('_start')]:%Y-%m-%d %H:%M}")
     worksheet.write(2, 0, 'до')
