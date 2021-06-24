@@ -1,17 +1,16 @@
 import datetime
 import inspect
+import json
 import pathlib
 
 import pandas as pd
 from influxdb_client import InfluxDBClient
 import os
 
-TOKEN = 'N3h3IjVuHnMvJVnbQ9-px3aqHBZ0E8DJPchggfC2M_EpE1CGPcL2y_NvPukOYEBCkUha8F4qUQytsnvTHeJ9_g=='
-ORG = 'Inosat'
-URL = 'http://192.168.67.249:8086'
 
-OUTPUT_PATH = "D:\\reports"
-TIMEZONE = "Europe/Minsk"
+# read settings
+with open(os.getenv('inosatiot_cfg')) as f:
+    cfg = json.loads(f.read())
 
 
 def report_test():
@@ -19,7 +18,7 @@ def report_test():
     TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     # region setup
-    output_full_path = OUTPUT_PATH + "/" + NAME_FOR_USER + "/" + TIMESTAMP
+    output_full_path = cfg['report']['output_path'] + "/" + NAME_FOR_USER + "/" + TIMESTAMP
     output_file_name = output_full_path + "/ " + NAME_FOR_USER + "_" + TIMESTAMP
     name_internal = inspect.currentframe().f_code.co_name
 
@@ -47,24 +46,20 @@ def report_test():
       |> yield()
     """
 
-    client = InfluxDBClient(url=URL, token=TOKEN, org=ORG)
+    client = InfluxDBClient(url=cfg['influxdb']['url'], token=cfg['influxdb']['token'], org=cfg['influxdb']['org'])
     df = client.query_api().query_data_frame(query)
 
-    # df = df.set_index('_time')
     df = df.drop(columns=['result', 'table', '_measurement', 'host', ])
     df['_value'] = pd.to_numeric(df['_value'])
-
-
-    # print(df)
 
 
     # Excel
     df_excel = df
 
     df_excel['_time'] = df_excel['_time'].dt.tz_localize(None)
-    df_excel['_start'] = df_excel['_start'].dt.tz_convert(TIMEZONE)
+    df_excel['_start'] = df_excel['_start'].dt.tz_convert(cfg['timezone'])
     df_excel['_start'] = df_excel['_start'].dt.tz_localize(None)
-    df_excel['_stop'] = df_excel['_stop'].dt.tz_convert(TIMEZONE)
+    df_excel['_stop'] = df_excel['_stop'].dt.tz_convert(cfg['timezone'])
     df_excel['_stop'] = df_excel['_stop'].dt.tz_localize(None)
 
     writer = pd.ExcelWriter(output_file_name + '.xlsx',
@@ -88,11 +83,8 @@ def report_test():
     worksheet.write(2, 0, 'до')
     worksheet.write(2, 1, f"{df_excel.iloc[0, df_excel.columns.get_loc('_stop')]:%Y-%m-%d %H:%M}")
 
-    # dfd.iloc[[0, 2], dfd.columns.get_loc('A')]
-
     writer.save()
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     report_test()
