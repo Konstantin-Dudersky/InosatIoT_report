@@ -1,3 +1,4 @@
+import getpass
 import os
 
 os.chdir('..')
@@ -14,8 +15,8 @@ StartLimitBurst=5
 Restart=on-failure
 RestartSec=5s
 Type=simple
-User=inosat
-Group=inosat
+User={getpass.getuser()}
+Group={getpass.getuser()}
 EnvironmentFile=/etc/environment
 ExecStart={path}/venv/bin/python3 {path}/main.py
 
