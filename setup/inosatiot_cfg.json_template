@@ -1,0 +1,11 @@
+{
+  "timezone": "Europe/Minsk",
+  "influxdb": {
+    "token": "",
+    "org": "",
+    "url": ""
+  },
+  "report": {
+    "output_path": ""
+  }
+}
