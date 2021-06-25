@@ -1,12 +1,11 @@
 import datetime
-import inspect
+# import inspect
 import json
+import os
 import pathlib
 
 import pandas as pd
 from influxdb_client import InfluxDBClient
-import os
-
 
 # read settings
 with open(os.getenv('inosatiot_cfg')) as f:
@@ -20,7 +19,7 @@ def report_test():
     # region setup
     output_full_path = cfg['report']['output_path'] + "/" + name_for_user + "/" + timestamp
     output_file_name = output_full_path + "/ " + name_for_user + "_" + timestamp
-    name_internal = inspect.currentframe().f_code.co_name
+    # name_internal = inspect.currentframe().f_code.co_name
 
     pathlib.Path(output_full_path).mkdir(parents=True, exist_ok=True)
     # distutils.dir_util.copy_tree("templates/_base", output_full_path + "/tmp")
@@ -75,7 +74,6 @@ def report_test():
                       index=False,
                       startrow=4)
 
-    # workbook = writer.book
     worksheet = writer.sheets['Sheet1']
 
     worksheet.write(0, 0, name_for_user)
