@@ -3,8 +3,10 @@ import datetime
 import json
 import os
 import pathlib
+import time
 
 import pandas as pd
+import schedule
 from influxdb_client import InfluxDBClient
 
 # read settings
@@ -85,5 +87,8 @@ def report_test():
     writer.save()
 
 
-if __name__ == '__main__':
-    report_test()
+schedule.every(30).seconds.do(report_test)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
