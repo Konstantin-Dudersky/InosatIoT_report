@@ -79,7 +79,7 @@ def report_test():
     writer.save()
 
 
-schedule.every(0).hour.at(":00").do(report_test)
+schedule.every(1).hours.at(":00").do(report_test)
 
 while True:
     schedule.run_pending()
