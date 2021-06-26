@@ -1,9 +1,7 @@
 import getpass
 import os
 
-os.chdir('..')
 path = os.getcwd()
-os.chdir('setup')
 
 service = f"""
 [Unit]
@@ -24,6 +22,6 @@ ExecStart={path}/venv/bin/python3 {path}/main.py
 WantedBy=multi-user.target
 """
 
-f = open("inosatiot_report.service", "w")
+f = open("setup/inosatiot_report.service", "w")
 f.write(service)
 f.close()
