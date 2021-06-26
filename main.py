@@ -30,14 +30,6 @@ def report_test():
     # endregion
 
     query = """
-    counterByTime = (table =<-, every) =>
-      table
-        |> window(every: every, createEmpty: true)
-        |> increase()
-        |> last()
-        |> duplicate(as: "_time", column: "_start")
-        |> window(every: inf)
-    
     from(bucket: "energy")
       |> range(start: -10d)
       |> filter(fn: (r) => r["_measurement"] == "energy_consumption")
@@ -87,7 +79,7 @@ def report_test():
     writer.save()
 
 
-schedule.every(30).seconds.do(report_test)
+schedule.every(0).hour.at(":00").do(report_test)
 
 while True:
     schedule.run_pending()
