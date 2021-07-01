@@ -3,8 +3,7 @@ import os
 
 path = os.getcwd()
 
-service = f"""
-[Unit]
+service = f"""[Unit]
 Description=Reporting for InosatIoT
 StartLimitIntervalSec=500
 StartLimitBurst=5
@@ -19,9 +18,10 @@ EnvironmentFile=/etc/environment
 ExecStart={path}/venv/bin/python3 {path}/main.py
 
 [Install]
-WantedBy=multi-user.target
-"""
+WantedBy=multi-user.target"""
 
 f = open("setup/inosatiot_report.service", "w")
 f.write(service)
 f.close()
+
+print(f'Created service file: \n{service}')

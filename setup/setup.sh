@@ -27,15 +27,14 @@ source venv/bin/activate
 python3 -m pip install -r setup/requirements.txt
 
 echo
-echo "-----> Create systemd service"
+echo "-----> Create systemd service:"
 python3 setup/service.py
 sudo mv setup/inosatiot_report.service /etc/systemd/system
-#rm setup/inosatiot_report.service
 sudo systemctl daemon-reload
 sudo systemctl enable inosatiot_report.service
 
 echo
-echo "-----> Share folder"
+echo "-----> Share folder:"
 sudo apt install -y samba
 sudo smbpasswd -a "$USER"
 sudo python3 setup/samba.py
