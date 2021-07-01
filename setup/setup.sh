@@ -1,14 +1,20 @@
 #!/bin/bash
 
 echo
-echo "-----> Updating system:"
-sudo apt update
-sudo apt -y upgrade
-
-echo
 echo "-----> Python version:"
 python3 -V
 
+echo
+echo "-----> Set environment variable:"
+sudo python3 setup/environment.py
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+echo
+echo "-----> Updating system:"
+sudo apt update
+sudo apt -y upgrade
 echo
 echo "-----> Install python base packages:"
 sudo apt install -y python3-pip
@@ -22,8 +28,17 @@ python3 -m pip install -r setup/requirements.txt
 
 echo
 echo "-----> Create systemd service"
-python3 setup/inosatiot_report.py
-sudo cp setup/inosatiot_report.service /etc/systemd/system
-rm setup/inosatiot_report.service
+python3 setup/service.py
+sudo mv setup/inosatiot_report.service /etc/systemd/system
+#rm setup/inosatiot_report.service
 sudo systemctl daemon-reload
 sudo systemctl enable inosatiot_report.service
+
+echo
+echo "-----> Share folder"
+sudo apt install -y samba
+sudo smbpasswd -a "$USER"
+sudo python3 setup/samba.py
+sudo systemctl restart smbd.service
+
+# TODO - синхронизация с github

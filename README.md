@@ -1,6 +1,7 @@
 # Установка
 1. Скачать проект с github
    
+        $ sudo apt install git
         $ git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
         $ cd YOUR-REPOSITORY
 
