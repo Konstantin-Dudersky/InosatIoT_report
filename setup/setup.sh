@@ -15,6 +15,7 @@ echo
 echo "-----> Updating system:"
 sudo apt update
 sudo apt -y upgrade
+
 echo
 echo "-----> Install python base packages:"
 sudo apt install -y python3-pip
@@ -40,4 +41,9 @@ sudo smbpasswd -a "$USER"
 sudo python3 setup/samba.py
 sudo systemctl restart smbd.service
 
-# TODO - синхронизация с github
+echo
+echo "-----> Start:"
+sudo systemctl start inosatiot_report.service
+
+echo
+echo "-----> Finish!"
